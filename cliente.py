@@ -1,6 +1,6 @@
 import requests, subprocess, time
 
-SERVER  = "https://control-remoto.onrender.com"
+SERVER  = "https://control-remote.onrender.com"
 ID      = "cliente1"
 
 while True:
