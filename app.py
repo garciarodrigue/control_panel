@@ -1,26 +1,18 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
+import os
 
 app = Flask(__name__)
-comandos = {}
 
-@app.route('/get/<id>', methods=['GET'])
-def obtener_comando(id):
-    return comandos.pop(id, "")  # comando se destruye después de leerlo
-
-@app.route('/send/<id>', methods=['POST'])
-def recibir_salida(id):
-    print(f"[{id}] → {request.data.decode()}")
-    return "OK"
-
-@app.route('/cmd/<id>', methods=['POST'])
-def enviar_comando(id):
-    comandos[id] = request.data.decode()
-    return "Comando recibido"
-
-@app.route('/')
+@app.route("/", methods=["GET"])
 def index():
-    return "Control remoto activo."
+    return "Servidor ONLINE desde Render"
+
+@app.route("/comando", methods=["POST"])
+def recibir_comando():
+    data = request.get_json()
+    print(">> Comando recibido:", data)
+    return jsonify({"estado": "ok", "comando": data}), 200
+
 if __name__ == "__main__":
-    import os
-    port = int(os.environ.get("PORT", 5000))  # Render asigna un puerto
+    port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
